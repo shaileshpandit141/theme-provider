@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="./assets/icons/favicon.png" type="image/x-icon" />
+    <title>ThemeProvider.js — Minimal JS Theming Utility</title>
+
+    <!-- Linked themeProvider script file. -->
+    <script src="./dist/themeProvider.min.js"></script>
+
+    <!-- Marked (Markdown Parser) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <!-- Linked external styles file. -->
+    <link rel="stylesheet" href="./styles/style.css" />
+
+    <!-- Highlight.js (Code Highlighting) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css"
+    />
+
+    <!-- Define inline css styles -->
+    <style>
+      :root {
+        --bg-primary: #fff;
+        --color-primary: #181818;
+      }
+
+      :root[data-theme="dark"] {
+        --bg-primary: #181818;
+        --color-primary: #fff;
+      }
+
+      body {
+        font-family: system-ui, sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--color-primary);
+        transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="layout wrapper">
+        <section class="left-grid">
+          <h2>ThemeProvider.js</h2>
+        </section>
+        <section class="right-grid">
+          <a
+            href="https://github.com/shaileshpandit141/theme-provider"
+            target="_blank"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              height="20"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.385 7.86 10.91.575.106.785-.25.785-.555 0-.275-.01-1.005-.015-1.975-3.2.695-3.875-1.54-3.875-1.54-.525-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.705.08-.705 1.165.08 1.78 1.195 1.78 1.195 1.03 1.765 2.705 1.255 3.365.96.105-.745.405-1.255.735-1.545-2.55-.29-5.23-1.275-5.23-5.665 0-1.25.44-2.275 1.165-3.075-.115-.29-.505-1.46.11-3.045 0 0 .955-.305 3.13 1.17a10.89 10.89 0 0 1 2.85-.385c.97.005 1.95.13 2.85.385 2.17-1.475 3.125-1.17 3.125-1.17.62 1.585.23 2.755.115 3.045.73.8 1.165 1.825 1.165 3.075 0 4.405-2.685 5.375-5.245 5.66.42.37.79 1.095.79 2.21 0 1.595-.015 2.88-.015 3.27 0 .305.21.67.79.555A10.999 10.999 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"
+              />
+            </svg>
+          </a>
+          <!-- Theme Selector Element-->
+          <select
+            onchange="themeProvider.setTheme(this.value)"
+            class="theme-selector"
+          >
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+          <script>
+            // Update the theme selector value based on the current theme. When the page loads.
+            const themeSelector = document.querySelector(".theme-selector");
+            themeSelector.value = themeProvider.getTheme();
+          </script>
+        </section>
+      </div>
+    </header>
+
+    <!-- Main content goes here -->
+    <main class="layout content"></main>
+
+    <script>
+      const apiCache = new Map();
+
+      async function getRequest(url) {
+        let timeout = 8000;
+
+        // Return cached response if available
+        if (apiCache.has(url)) {
+          return apiCache.get(url);
+        }
+
+        // Create a timeout controller
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeout);
+
+        try {
+          const response = await fetch(url, {
+            method: "GET",
+            signal: controller.signal,
+            headers: {
+              Accept: "application/json",
+            },
+          });
+
+          clearTimeout(timer);
+
+          if (!response.ok) {
+            throw new Error(
+              `Request failed: ${response.status} ${response.statusText}`
+            );
+          }
+
+          const data = await response;
+          apiCache.set(url, data);
+
+          return data;
+        } catch (error) {
+          clearTimeout(timer);
+          console.error("GET request error:", error.message);
+          throw error;
+        }
+      }
+
+      // Enable highlight.js after markdown render
+      marked.setOptions({
+        highlight: function (code, lang) {
+          return hljs.highlightAuto(code).value;
+        },
+      });
+
+      try {
+        getRequest(
+          "https://raw.githubusercontent.com/shaileshpandit141/theme-provider/main/README.md"
+        )
+          .then((res) => res.text())
+          .then((markdown) => {
+            document.querySelector(".content").innerHTML =
+              marked.parse(markdown);
+            hljs.highlightAll(); // Apply syntax highlighting
+          });
+      } catch (error) {
+        console.error("Error fetching Docs:", error);
+        document.querySelector(".content").innerText = "Error loading Docs.";
+      }
+    </script>
+  </body>
+</html>

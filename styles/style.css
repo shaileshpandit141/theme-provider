@@ -1,0 +1,267 @@
+/* Universal Reset
+ * Applies baseline reset to all elements including pseudo-elements
+ * Removes margins, padding, borders and sets consistent box model
+ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  vertical-align: baseline;
+  -webkit-tap-highlight-color: transparent;
+  scrollbar-color: darkgray transparent;
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
+
+  &:hover,
+  &:focus,
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+/* HTML Root Element
+ * Sets foundational typography and scrolling behavior
+ * Ensures proper text sizing and overflow handling
+ */
+html {
+  font-size: 100%;
+  line-height: 1.5;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-text-size-adjust: 100%;
+}
+
+:root {
+  --bg-primary: #fff;
+  --bg-code: #181818;
+  --bg-header: #3b294736;
+  --color-primary: #181818;
+  --box-shadow: #00000075;
+
+  --header-height: 60px;
+}
+
+:root[data-theme="dark"] {
+  --bg-primary: #181818;
+  --bg-code: #2f2f2f;
+  --bg-header: #3b29475d;
+  --color-primary: #fff;
+  --box-shadow: #ffffff75;
+}
+
+.layout {
+  width: 100%;
+  max-width: 1024px;
+  min-width: 0;
+  padding-inline: 24px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: system-ui, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--color-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out;
+
+  .header {
+    backdrop-filter: blur(10px);
+    background-color: var(--bg-header);
+    width: 100%;
+    height: var(--header-height);
+    position: sticky;
+    top: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    border-bottom: 1.5px solid #3b294736;
+    transition: background-color 0.4s ease-in-out;
+
+    .wrapper {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      .left-grid {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .right-grid {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+
+        .theme-selector {
+          width: 100%;
+          max-width: 240px;
+          min-width: fit-content;
+          padding: 10px 40px 10px 15px;
+          border: none;
+          box-shadow: 0 0 2px var(--box-shadow);
+          border-radius: 5px;
+          background-color: transparent;
+          color: var(--color-primary);
+          font-size: 16px;
+          appearance: none;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 20 20'%3E%3Cpolygon points='5,7 10,12 15,7' fill='%23999'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 15px center;
+          background-size: 18px;
+          transition: box-shadow 0.4s ease-in-out;
+        }
+
+        option {
+          color: #000;
+        }
+
+        a {
+          aspect-ratio: 1/1;
+          height: 40px;
+          border-radius: 999rem;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          svg {
+            aspect-ratio: 1/1;
+            height: 75%;
+            object-fit: contain;
+            object-position: center;
+          }
+        }
+      }
+    }
+  }
+
+  .content {
+    overflow: hidden;
+    line-height: 1.5;
+
+    pre {
+      border-radius: 4px;
+      overflow: hidden;
+
+      code {
+        line-height: 1.6;
+        background-color: var(--bg-code) !important;
+        transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out;
+      }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #fff;
+
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        background-color: var(--bg-code);
+        border-bottom: 1px solid var(--bg-primary);
+        transition: background-color 0.4s ease-in-out, border 0.4s ease-in-out;
+
+        &:nth-child(odd) {
+          border-right: 1px solid var(--bg-primary);
+        }
+      }
+    }
+
+    .demo-theme {
+      height: fit-content;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+
+      .demo-title,
+      .demo-description {
+        width: 100%;
+        max-width: 480px;
+        text-align: center;
+      }
+
+      .demo-title {
+        margin-bottom: 0;
+      }
+
+      .links {
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        a {
+          text-decoration: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 8px;
+          gap: 8px;
+
+          svg {
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+          }
+        }
+      }
+
+      .wrapper {
+        width: 100%;
+        max-width: 480px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        button {
+          all: unset;
+          flex: 1;
+          min-width: 120px;
+          padding: 8px 16px;
+          font-size: 16px;
+          font-weight: 600;
+          letter-spacing: 0.04em;
+          text-transform: capitalize;
+          background-color: #8f6900;
+          color: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 12px;
+          box-shadow: 0 0 2px var(--box-shadow);
+          transition: background-color 0.4s ease-in-out,
+            box-shadow 0.4s ease-in-out;
+
+          &:hover {
+            background-color: #058f00;
+          }
+
+          &.active {
+            background-color: #058f00;
+          }
+        }
+      }
+    }
+  }
+}
